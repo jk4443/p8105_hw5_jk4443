@@ -111,6 +111,8 @@ path_df %>%
 ggplot(aes(x = week, y = outcome, color = files)) + geom_point() + geom_path()
 ```
 
+While no major trend can be clearly seen, It can be noted that the experimental groups have a higher outcome compared to the control groups. It can also be noted that Controls 4, 5, and 6 are at the lower end while experimental groups 4, 5, and 6 are at the upper end of the chart. 
+
 
 # Problem3
 
@@ -126,5 +128,22 @@ sim_t_test = function(n_samp = 30, mu = 2, sigma = 5) {
   broom::tidy(test)
   
 }
+```
+
+```{r}
+sim_results = 
+  tibble(mu = 0:6) %>% 
+      mutate(
+        output_lists = map(.x = mu, ~rerun(5000, sim_t_test(n = 30, mu = .x))),
+        estimate_dfs = map(output_lists, bind_rows)
+               ) %>%
+  select(-output_lists) %>% 
+  unnest()
+```
+
+```{r}
+sim_results %>% 
+  mutate(
+    pvalue = p.value)
 ```
 
